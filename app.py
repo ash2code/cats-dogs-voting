@@ -5,10 +5,10 @@ app = Flask(__name__)
 
 # MySQL configuration
 db_config = {
-    'user': 'admin',
-    'password': 'admin12345',
-    'host': 'catsanddogs.cfg4kc6qutb6.ap-south-1.rds.amazonaws.com',
-    'database': 'voting_app'
+    'user': '********',
+    'password': '*******',
+    'host': '*************',
+    'database': '********'
 }
 
 # Route for the main page
