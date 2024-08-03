@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cat vs Dog Voting</title>
+    <script>
+        // Function to handle form submission and update results
+        async function submitVote(event) {
+            event.preventDefault(); // Prevent the form from submitting normally
+
+            const form = event.target;
+            const formData = new FormData(form);
+            
+            try {
+                // Send the vote via POST request
+                const response = await fetch('/vote', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    // Clear the form and update results
+                    form.reset();
+                    updateResults();
+                } else {
+                    console.error('Failed to submit vote');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // Function to fetch and update results
+        async function updateResults() {
+            try {
+                const response = await fetch('/results');
+                const results = await response.json();
+
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = ''; // Clear previous results
+
+                const table = document.createElement('table');
+                table.border = '1';
+
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                const th1 = document.createElement('th');
+                th1.textContent = 'Animal';
+                const th2 = document.createElement('th');
+                th2.textContent = 'Votes';
+                headerRow.appendChild(th1);
+                headerRow.appendChild(th2);
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+
+                const tbody = document.createElement('tbody');
+                results.forEach(result => {
+                    const row = document.createElement('tr');
+                    const td1 = document.createElement('td');
+                    td1.textContent = result.animal;
+                    const td2 = document.createElement('td');
+                    td2.textContent = result.count;
+                    row.appendChild(td1);
+                    row.appendChild(td2);
+                    tbody.appendChild(row);
+                });
+                table.appendChild(tbody);
+
+                resultsDiv.appendChild(table);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // Fetch and display results when the page loads
+        window.onload = updateResults;
+    </script>
+</head>
+<body>
+    <h1>Vote for Your Favorite Animal</h1>
+    <form onsubmit="submitVote(event)">
+        <label for="cat">
+            <img src="{{ url_for('static', filename='cat.jpg') }}" alt="Cat" width="200">
+            <input type="radio" id="cat" name="animal" value="cat" required>
+            Cat
+        </label><br>
+        <label for="dog">
+            <img src="{{ url_for('static', filename='dog.jpg') }}" alt="Dog" width="200">
+            <input type="radio" id="dog" name="animal" value="dog" required>
+            Dog
+        </label><br>
+        <input type="submit" value="Vote">
+    </form>
+    <h2>Current Results</h2>
+    <div id="results"></div>
+</body>
+</html>
